@@ -64,7 +64,6 @@ def main(args):
                                                   np.float(args.nframes)))))
         sys.stdout.write("\rFrame {0} of {1}".format(i+1,args.nframes))
         sys.stdout.flush()
-        drm[np.abs(drm) < 1.e-6] = 0.
         ax.clear()
         ax.pcolormesh(lon*180/np.pi,lat*180/np.pi,drm,
              transform=ccrs.PlateCarree(),cmap='seismic',vmin=-vlim,vmax=vlim)
@@ -73,7 +72,7 @@ def main(args):
         return
     
     interval = args.duration / np.float(args.nframes)
-  
+      
     anim = animation.FuncAnimation(fig, animate, init_func=init, 
                                    frames=args.nframes, interval=interval, 
                                    blit=False)
