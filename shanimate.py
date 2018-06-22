@@ -11,8 +11,8 @@ Spherical degree (l) and azimuthal order (m) required as inputs.
 
 #import stuff
 from __future__ import division, print_function
+import sys
 import argparse
-from math import factorial
 import scipy.special as sp
 import numpy as np
 import cartopy.crs as ccrs
@@ -42,22 +42,13 @@ def main(args):
     for j, yy in enumerate(colat):
         for i, xx in enumerate(lon):
             d[i,j] = sp.sph_harm(args.m,args.ell,xx,yy)
-    #maximal value for normalizing color range
-    vlim = np.sqrt((2.*args.ell+1)*factorial(args.ell-args.m) / 
-                   (4.*np.pi*factorial(args.ell+args.m)))
-    vlim = np.sqrt((2.*args.ell+1)/ (4.*np.pi))
-    
-    
     
     # set up figure
-    fig = plt.figure(figsize=(args.size,args.size))
-    fig.set_tight_layout(True)
+    fig = plt.figure(figsize=(args.size,args.size),tight_layout = {'pad': 0})
     ax = plt.subplot(projection=plotcrs)
     drm = np.transpose(np.real(d))
-    drm[np.abs(drm) < 1.e-6] = 0.
-    extr = np.max(np.abs(drm))
-    ax.contourf(lon*180/np.pi,lat*180/np.pi,drm,
-                np.linspace(-extr,extr,args.ncontours),
+    vlim = np.max(np.abs(drm))
+    ax.pcolormesh(lon*180/np.pi,lat*180/np.pi,drm,
                 transform=ccrs.PlateCarree(),cmap='seismic',vmin=-vlim,
                 vmax=vlim)
     ax.relim()
@@ -68,28 +59,28 @@ def main(args):
     #No initialization needed
     def init():
         return 
-
+    
     #animation function to call
     def animate(i):
         drm = np.transpose(np.real(d*np.exp(-1.j*(2.*np.pi*float(i) / 
                                                   np.float(args.nframes)))))
-        print("Frame {0} of {1}".format(i+1,args.nframes))
+        sys.stdout.write("\rFrame {0} of {1}".format(i+1,args.nframes))
+        sys.stdout.flush()
         drm[np.abs(drm) < 1.e-6] = 0.
-        extr = np.max(np.abs(drm))
         ax.clear()
-        ax.contourf(lon*180/np.pi,lat*180/np.pi,drm,np.linspace(-extr,extr,40),
+        ax.pcolormesh(lon*180/np.pi,lat*180/np.pi,drm,
              transform=ccrs.PlateCarree(),cmap='seismic',vmin=-vlim,vmax=vlim)
         ax.relim()
         ax.autoscale_view()
         return
     
     interval = args.duration / np.float(args.nframes)
-    
+  
     anim = animation.FuncAnimation(fig, animate, init_func=init, 
                                    frames=args.nframes, interval=interval, 
                                    blit=False)
     anim.save(outfile, dpi=args.dpi, fps = 1./interval, writer='imagemagick')
-    print('Wrote '+outfile)
+    print('\nWrote '+outfile)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -100,19 +91,17 @@ if __name__ == '__main__':
                         help='output gif filename')
     parser.add_argument('-i','--inc', type=float, default=60, 
                         help='inclination (degrees from pole)')
-    parser.add_argument('-s','--size', type=float, default=3, 
+    parser.add_argument('-s','--size', type=float, default=1, 
                         help='image size (inches)')
-    parser.add_argument('-n','--nframes', type=int, default=100, 
+    parser.add_argument('-n','--nframes', type=int, default=32, 
                         help='number of frames in animation')
-    parser.add_argument('-c','--ncontours', type=int, default=51, 
-                        help='number of contours to draw')
-    parser.add_argument('-d','--duration', type=float, default=3, 
+    parser.add_argument('-d','--duration', type=float, default=2, 
                         help='animation duration (seconds)')
     parser.add_argument('--nlon', type=int, default=200, 
                         help='number of longitude samples')
     parser.add_argument('--nlat', type=int, default=500, 
                         help='number of latitude samples')
-    parser.add_argument('--dpi', type=float, default=200, 
+    parser.add_argument('--dpi', type=float, default=300, 
                         help='dots per inch')
     args = parser.parse_args()
     
