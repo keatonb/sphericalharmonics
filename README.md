@@ -3,6 +3,8 @@ Generate animated gifs of spherical harmonics, like this:
 
 ![Example spherical harmonic animation](https://raw.githubusercontent.com/keatonb/sphericalharmonics/master/l2m0.gif)
 
+A description of how these animations are made can be found [on my blog](http://keatonb.github.io/archivers/shanimate).
+
 Run from the Terminal with these options:
 ```
 usage: shanimate.py [-h] [-o OUTFILE] [-i INC] [-s SIZE] [-n NFRAMES]
