@@ -19,9 +19,7 @@ import cartopy.crs as ccrs
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from matplotlib import animation, rc
-rc('animation', html='html5')
-
+from matplotlib import animation
 
 
 def main(args):
