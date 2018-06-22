@@ -7,7 +7,7 @@ A description of how these animations are made can be found [on my blog](http://
 
 Run from the Terminal with these options:
 ```
-usage: shanimate.py [-h] [-o OUTFILE] [-i INC] [-s SIZE] [-n NFRAMES]
+usage: python shanimate.py [-h] [-o OUTFILE] [-i INC] [-s SIZE] [-n NFRAMES]
                     [-d DURATION] [--nlon NLON] [--nlat NLAT] [--dpi DPI]
                     ell m
 
