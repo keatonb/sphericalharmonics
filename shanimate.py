@@ -42,7 +42,7 @@ def main(args):
             d[i,j] = sp.sph_harm(args.m,args.ell,xx,yy)
     
     # set up figure
-    fig = plt.figure(figsize=(args.size,args.size),tight_layout = {'pad': 0})
+    fig = plt.figure(figsize=(args.size,args.size),tight_layout = {'pad': .1})
     ax = plt.subplot(projection=plotcrs)
     drm = np.transpose(np.real(d))
     vlim = np.max(np.abs(drm))
